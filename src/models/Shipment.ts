@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IShipment extends Document {
-  userId: string;
   category: string;
   invoiceNo: string;
   dateOfShipment: string;
@@ -21,7 +20,6 @@ export interface IShipment extends Document {
 }
 
 const ShipmentSchema: Schema = new Schema({
-  userId: { type: String, required: true },
   category: { type: String, default: 'USA' },
   invoiceNo: { type: String },
   dateOfShipment: { type: String },

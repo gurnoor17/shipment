@@ -37,7 +37,7 @@ let toastIdCounter = 0;
 
 export default function Home() {
   const [shipments, setShipments] = useState<Shipment[]>([]);
-  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
   const [profile, setProfile] = useState<Profile>({ userName: 'Logistics Manager', companyName: 'Danodia Global Exports', defaultCategory: 'USA' });
   const [activeCategory, setActiveCategory] = useState('All');
   const [currentViewMode, setCurrentViewMode] = useState('dashboard');
@@ -52,17 +52,10 @@ export default function Home() {
   useEffect(() => {
     fetchProfile();
     fetchShipments();
-    fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function fetchUser() {
-    const res = await fetch('/api/auth/me');
-    if (res.ok) {
-      const data = await res.json();
-      setCurrentUser(data);
-    }
-  }
+
 
   async function fetchProfile() {
     const res = await fetch('/api/profile');
@@ -209,12 +202,7 @@ export default function Home() {
     return String(unsafe);
   };
 
-  const handleLogout = async () => {
-    const res = await fetch('/api/auth/logout', { method: 'POST' });
-    if (res.ok) {
-      window.location.href = '/login';
-    }
-  };
+
 
   // Derived state
   const navDashboardCount = shipments.length;
@@ -436,19 +424,8 @@ export default function Home() {
                 👤
               </div>
               <div className="flex flex-col">
-                <span className="text-white">{currentUser?.name || 'Admin Profile'}</span>
+                <span className="text-white">{profile.userName}</span>
                 <span className="text-xs text-slate-500">Settings</span>
-              </div>
-            </li>
-            <li 
-              className="px-4 py-3 rounded-xl cursor-pointer flex items-center gap-3 text-sm font-medium transition-all hover:bg-rose-500/10 hover:text-rose-400 text-slate-400 mt-2"
-              onClick={handleLogout}
-            >
-              <div className="w-8 h-8 flex items-center justify-center text-lg">
-                🚪
-              </div>
-              <div className="flex flex-col">
-                <span>Sign Out</span>
               </div>
             </li>
           </ul>

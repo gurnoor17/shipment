@@ -3,21 +3,20 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-type UserData = {
-  name: string;
-  email: string;
-  createdAt: string;
+type Profile = {
+  userName: string;
+  companyName: string;
 };
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/auth/me')
+    fetch('/api/profile')
       .then(res => res.json())
       .then(data => {
-        if (!data.error) setUser(data);
+        if (!data.error) setProfile(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -27,19 +26,10 @@ export default function ProfilePage() {
     return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 animate-pulse">Loading Profile...</div>;
   }
 
-  if (!user) {
+  if (!profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-rose-500 gap-4">
         <div>Failed to load profile.</div>
-        <button 
-          onClick={async () => {
-            await fetch('/api/auth/logout', { method: 'POST' });
-            window.location.href = '/login';
-          }}
-          className="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-slate-700 transition-colors"
-        >
-          Return to Login
-        </button>
       </div>
     );
   }
@@ -56,7 +46,7 @@ export default function ProfilePage() {
             </svg>
             Back to Dashboard
           </Link>
-          <div className="text-sm text-slate-400">Personal Account</div>
+          <div className="text-sm text-slate-400">Settings</div>
         </div>
 
         {/* Profile Card */}
@@ -72,41 +62,12 @@ export default function ProfilePage() {
                   👤
                 </div>
               </div>
-              <button className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-colors border border-slate-200 shadow-sm mb-2">
-                Edit Profile
-              </button>
             </div>
 
             {/* User Details */}
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">{user.name}</h1>
-              <p className="text-slate-500 font-medium mt-1">{user.email}</p>
-            </div>
-
-            {/* Info Grid */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Account ID</div>
-                <div className="font-mono text-sm text-slate-700 break-all">{btoa(user.email).substring(0, 16)}...</div>
-              </div>
-              
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Member Since</div>
-                <div className="text-sm font-medium text-slate-700">
-                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric', day: 'numeric' }) : 'Recently'}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 pt-8 border-t border-slate-100">
-              <h3 className="text-lg font-bold text-slate-800 mb-4">Security</h3>
-              <div className="flex items-center justify-between p-4 border border-slate-200 rounded-xl">
-                <div>
-                  <div className="font-semibold text-slate-800 text-sm">Password</div>
-                  <div className="text-slate-500 text-xs mt-0.5">Last changed recently</div>
-                </div>
-                <button className="text-indigo-600 text-sm font-semibold hover:text-indigo-700">Update</button>
-              </div>
+              <h1 className="text-3xl font-bold text-slate-900">{profile.userName}</h1>
+              <p className="text-slate-500 font-medium mt-1">{profile.companyName}</p>
             </div>
             
           </div>
