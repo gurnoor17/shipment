@@ -14,7 +14,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Shipment not found' }, { status: 404 });
     }
     return NextResponse.json(shipment);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update shipment' }, { status: 500 });
   }
 }
@@ -30,7 +30,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       return NextResponse.json({ error: 'Shipment not found' }, { status: 404 });
     }
     return NextResponse.json({ message: 'Shipment deleted successfully' });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete shipment' }, { status: 500 });
   }
 }

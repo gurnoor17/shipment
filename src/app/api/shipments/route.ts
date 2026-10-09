@@ -7,7 +7,7 @@ export async function GET() {
     await connectToDatabase();
     const shipments = await Shipment.find().sort({ createdAt: -1 });
     return NextResponse.json(shipments);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch shipments' }, { status: 500 });
   }
 }
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const shipment = await Shipment.create(body);
     return NextResponse.json(shipment, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create shipment' }, { status: 500 });
   }
 }

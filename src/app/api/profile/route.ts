@@ -11,7 +11,7 @@ export async function GET() {
       profile = await Profile.create({});
     }
     return NextResponse.json(profile);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
   }
 }
@@ -27,7 +27,7 @@ export async function PUT(request: Request) {
       profile = await Profile.findOneAndUpdate({}, body, { new: true });
     }
     return NextResponse.json(profile);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 }

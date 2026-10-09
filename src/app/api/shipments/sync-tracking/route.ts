@@ -27,7 +27,7 @@ export async function POST() {
     }
     
     return NextResponse.json({ message: `Tracking sync complete. ${updatedCount} shipments automatically marked as Delivered.` });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to sync tracking status' }, { status: 500 });
   }
 }

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import Link from 'next/link';
+import { XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 
 type Shipment = {
   _id?: string;
@@ -52,7 +53,6 @@ export default function Home() {
   useEffect(() => {
     fetchProfile();
     fetchShipments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -192,10 +192,6 @@ export default function Home() {
     return Number(val).toLocaleString('en-IN');
   };
 
-  const formatMoney = (val: number | string) => {
-    if (!val && val !== 0) return '–';
-    return '₹' + Number(val).toLocaleString('en-IN', { maximumFractionDigits: 0 });
-  };
 
   const escapeHtml = (unsafe: string | number | boolean | null | undefined) => {
     if (unsafe === null || unsafe === undefined || unsafe === '') return '–';
@@ -333,19 +329,7 @@ export default function Home() {
     setEditingShipment(null);
   };
 
-  const handleShipmentDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (!val) return;
-    const d = new Date(val);
-    const originalDay = d.getDate();
-    d.setMonth(d.getMonth() + 3);
-    if (d.getDate() !== originalDay) d.setDate(0);
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    const target = document.getElementById('expectedReachingDate') as HTMLInputElement;
-    if (target) target.value = `${yyyy}-${mm}-${dd}`;
-  };
+
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen text-slate-900 font-inter">
@@ -416,17 +400,19 @@ export default function Home() {
 
         <div className="p-4 mt-auto">
           <ul className="space-y-1">
-            <li 
-              className="px-4 py-3 rounded-xl cursor-pointer flex items-center gap-3 text-sm font-medium transition-all hover:bg-white/5 hover:text-white"
-              onClick={() => { window.location.href = '/profile'; }}
-            >
-              <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                👤
-              </div>
-              <div className="flex flex-col">
-                <span className="text-white">{profile.userName}</span>
-                <span className="text-xs text-slate-500">Settings</span>
-              </div>
+            <li>
+              <Link
+                href="/profile" 
+                className="px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition-all hover:bg-white/5 hover:text-white"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
+                  👤
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-white">{profile.userName}</span>
+                  <span className="text-xs text-slate-500">Settings</span>
+                </div>
+              </Link>
             </li>
           </ul>
         </div>
@@ -683,7 +669,7 @@ export default function Home() {
                       <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
                       <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(val) => `₹${(val/1000).toFixed(0)}k`} />
                       <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                      <RechartsTooltip cursor={{fill: '#f8fafc', strokeWidth: 1, stroke: '#e2e8f0'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}} formatter={(val: any, name: any) => name === 'Shipments' ? [val, name] : [`₹${(Number(val) || 0).toLocaleString()}`, name]} />
+                      <RechartsTooltip cursor={{fill: '#f8fafc', strokeWidth: 1, stroke: '#e2e8f0'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}} formatter={(val: unknown, name: unknown) => name === 'Shipments' ? [val as string|number, name as string] : [`₹${(Number(val) || 0).toLocaleString()}`, name as string]} />
                       <Line yAxisId="left" type="monotone" dataKey="Revenue" stroke="#4F46E5" strokeWidth={4} dot={{ r: 4, fill: '#4F46E5', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
                       <Line yAxisId="left" type="monotone" dataKey="Profit" stroke="#10b981" strokeWidth={4} dot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
                       <Line yAxisId="right" type="monotone" dataKey="Shipments" stroke="#f59e0b" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 3, fill: '#f59e0b', strokeWidth: 2, stroke: '#fff' }} />
