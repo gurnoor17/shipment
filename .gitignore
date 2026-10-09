@@ -25,6 +25,8 @@
 *.pem
 
 # debug
+cookies*.txt
+test-db*.js
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
