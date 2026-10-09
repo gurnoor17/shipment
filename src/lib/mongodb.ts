@@ -1,18 +1,23 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/shipment_manager';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable');
+  throw new Error('MONGODB_URI is not configured in the environment');
 }
 
-// @ts-expect-error - mongoose is attached to the global object in dev
-let cached = global.mongoose;
-
-if (!cached) {
-  // @ts-expect-error - mongoose is attached to the global object in dev
-  cached = global.mongoose = { conn: null, promise: null };
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
 }
+
+declare global {
+  var mongooseCache: MongooseCache | undefined;
+}
+
+const cached =
+  global.mongooseCache ??
+  (global.mongooseCache = { conn: null, promise: null });
 
 async function connectToDatabase() {
   if (cached.conn) {
@@ -20,14 +25,15 @@ async function connectToDatabase() {
   }
 
   if (!cached.promise) {
-    const opts = {
+    cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
+      serverSelectionTimeoutMS: 10000,
+    }).catch((error) => {
+      cached.promise = null;
+      throw error;
     });
   }
+
   cached.conn = await cached.promise;
   return cached.conn;
 }
